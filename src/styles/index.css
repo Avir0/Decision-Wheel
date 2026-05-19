@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #0a0a14;
+  --bg-secondary: #111128;
+  --accent: #7c6aff;
+  --accent2: #ff6ab0;
+  --text: #f0eeff;
+  --text-muted: #8884aa;
+  --glass: rgba(255,255,255,0.05);
+  --glass-border: rgba(255,255,255,0.1);
+  --glow: rgba(124,106,255,0.3);
+}
+
+[data-theme="zen"] {
+  --bg-primary: #0d1a0f;
+  --bg-secondary: #152218;
+  --accent: #4ade80;
+  --accent2: #86efac;
+  --text: #f0fff4;
+  --text-muted: #6b9e78;
+  --glass: rgba(74,222,128,0.05);
+  --glass-border: rgba(74,222,128,0.15);
+  --glow: rgba(74,222,128,0.25);
+}
+
+[data-theme="space"] {
+  --bg-primary: #06041a;
+  --bg-secondary: #0d0b2a;
+  --accent: #a855f7;
+  --accent2: #60a5fa;
+  --text: #f5f0ff;
+  --text-muted: #8878cc;
+  --glass: rgba(168,85,247,0.06);
+  --glass-border: rgba(168,85,247,0.18);
+  --glow: rgba(168,85,247,0.3);
+}
+
+[data-theme="neon"] {
+  --bg-primary: #040408;
+  --bg-secondary: #08080f;
+  --accent: #00ffe5;
+  --accent2: #ff00aa;
+  --text: #e0fff9;
+  --text-muted: #00ccc0;
+  --glass: rgba(0,255,229,0.04);
+  --glass-border: rgba(0,255,229,0.15);
+  --glow: rgba(0,255,229,0.3);
+}
+
+[data-theme="anime"] {
+  --bg-primary: #050a18;
+  --bg-secondary: #090f20;
+  --accent: #ff4d88;
+  --accent2: #ffb347;
+  --text: #fff0f5;
+  --text-muted: #cc6699;
+  --glass: rgba(255,77,136,0.05);
+  --glass-border: rgba(255,77,136,0.18);
+  --glow: rgba(255,77,136,0.3);
+}
+
+[data-theme="sunset"] {
+  --bg-primary: #1a0a00;
+  --bg-secondary: #2a1008;
+  --accent: #ff7e35;
+  --accent2: #c855f7;
+  --text: #fff5ee;
+  --text-muted: #cc8866;
+  --glass: rgba(255,126,53,0.06);
+  --glass-border: rgba(255,126,53,0.18);
+  --glow: rgba(255,126,53,0.3);
+}
+
+[data-theme="dream"] {
+  --bg-primary: #0e0a1a;
+  --bg-secondary: #160f28;
+  --accent: #f472b6;
+  --accent2: #a78bfa;
+  --text: #fdf4ff;
+  --text-muted: #c084fc;
+  --glass: rgba(244,114,182,0.06);
+  --glass-border: rgba(244,114,182,0.18);
+  --glow: rgba(244,114,182,0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+  transition: background 0.5s ease, color 0.5s ease;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; opacity: 0.5; }
+
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.glow-text {
+  text-shadow: 0 0 30px var(--glow), 0 0 60px var(--glow);
+}
+
+.glow-box {
+  box-shadow: 0 0 30px var(--glow), 0 0 60px rgba(0,0,0,0.5);
+}
+
+.font-display { font-family: 'Syne', sans-serif; }
+.font-body { font-family: 'DM Sans', sans-serif; }
+
+/* Particle canvas */
+#particle-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Smooth theme transition */
+*, *::before, *::after {
+  transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Custom range slider */
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  height: 4px;
+  background: var(--glass-border);
+  border-radius: 2px;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-top: -6px;
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--glow);
+}
+
+/* Neon theme special effects */
+[data-theme="neon"] .glass {
+  box-shadow: inset 0 0 20px rgba(0,255,229,0.03), 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* Magnetic button effect */
+.magnetic-btn {
+  transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes rain {
+  0% { transform: translateY(-100px); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+@keyframes floatCloud {
+  0% { transform: translateX(-200px); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.8; }
+  100% { transform: translateX(calc(100vw + 200px)); opacity: 0; }
+}
+
+.rain-drop {
+  position: fixed;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--accent));
+  animation: rain linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.cloud-particle {
+  position: fixed;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  animation: floatCloud linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
