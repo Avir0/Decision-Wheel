@@ -64,7 +64,7 @@ function detectCategory(text) {
   return null
 }
 
-export function generateChoices(dilemma, mode = 'funny', count = 6) {
+function generateChoicesFallback(dilemma, mode = 'funny', count = 6) {
   const category = detectCategory(dilemma)
   let choices
 
@@ -77,6 +77,71 @@ export function generateChoices(dilemma, mode = 'funny', count = 6) {
   // Shuffle
   choices = choices.sort(() => Math.random() - 0.5).slice(0, count)
   return choices
+}
+
+function sanitizeChoices(rawChoices, count) {
+  const cleaned = rawChoices
+    .map(item => String(item).replace(/^[-*\d.\s)]+/, '').trim())
+    .filter(Boolean)
+  return [...new Set(cleaned)].slice(0, count)
+}
+
+function parseChoicesFromResponse(text, count) {
+  if (!text) return []
+
+  try {
+    const maybeJson = JSON.parse(text)
+    if (Array.isArray(maybeJson)) return sanitizeChoices(maybeJson, count)
+    if (Array.isArray(maybeJson?.choices)) return sanitizeChoices(maybeJson.choices, count)
+  } catch (_) {}
+
+  const lines = text
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean)
+  return sanitizeChoices(lines, count)
+}
+
+export async function generateChoices(dilemma, mode = 'funny', count = 6) {
+  const prompt = [
+    `User dilemma: ${dilemma}`,
+    `Mode: ${mode}`,
+    `Generate exactly ${count} short choice options.`,
+    'Return ONLY JSON in this format: {"choices":["option1","option2"]}',
+    'No markdown. No explanation. No extra text.',
+  ].join('\n')
+
+  const modelCandidates = [
+    'qwen2.5:3b-instruct-q4_K_M',
+    'qwen2.5:3b-instruct-q4_0',
+    'qwen2.5:3b',
+  ]
+
+  for (const model of modelCandidates) {
+    try {
+      const response = await fetch('/api/ollama/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model,
+          prompt,
+          stream: false,
+          options: {
+            temperature: 0.7,
+            top_p: 0.9,
+            num_predict: 220,
+          },
+        }),
+      })
+
+      if (!response.ok) continue
+      const data = await response.json()
+      const parsed = parseChoicesFromResponse(data?.response, count)
+      if (parsed.length >= 2) return parsed
+    } catch (_) {}
+  }
+
+  return generateChoicesFallback(dilemma, mode, count)
 }
 
 export function getAIExplanation(choice, mode = 'funny') {
